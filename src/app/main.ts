@@ -42,13 +42,23 @@ const bootstrap = function() {
 
     Sync.manage('myShoppingList', null, {}, {}, () => {
       KeycloakService.init(keycloakConfig).then(() => {
+        const syncCloudUrl = syncConfig.uri + '/sync/';
+        var syncCloudHandler;
         if(keycloakConfig) {
-          const syncCloudUrl = syncConfig.uri + '/sync/';
-          const syncCloudHandler = buildSyncCloudHandler(syncCloudUrl, {
+          syncCloudHandler = buildSyncCloudHandler(syncCloudUrl, {
             headers: {
               'Authorization': 'Bearer ' + KeycloakService.auth.authz.token
             }
           });
+        } else if (syncConfig.app_id && syncConfig.app_key) {
+          syncCloudHandler = buildSyncCloudHandler(syncCloudUrl, {
+            headers: {
+              'app_id': syncConfig.app_id,
+              'app_key': syncConfig.app_key
+            }
+          });
+        }
+        if (syncCloudHandler) {
           Sync.setCloudHandler(syncCloudHandler);
         }
         const platform = platformBrowserDynamic();
