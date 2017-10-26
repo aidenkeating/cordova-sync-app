@@ -1,4 +1,5 @@
 declare var require: any
+
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app.module';
 import { KeycloakService } from '../services/keycloak.service';
@@ -42,13 +43,21 @@ const bootstrap = function() {
 
     Sync.manage('myShoppingList', null, {}, {}, () => {
       KeycloakService.init(keycloakConfig).then(() => {
+        const syncCloudUrl = syncConfig.uri + '/sync/';
+        var syncCloudHandler;
         if(keycloakConfig) {
-          const syncCloudUrl = syncConfig.uri + '/sync/';
-          const syncCloudHandler = buildSyncCloudHandler(syncCloudUrl, {
+          syncCloudHandler = buildSyncCloudHandler(syncCloudUrl, {
             headers: {
               'Authorization': 'Bearer ' + KeycloakService.auth.authz.token
             }
           });
+        }
+        if (syncConfig.headers) {
+          syncCloudHandler = buildSyncCloudHandler(syncCloudUrl, {
+            headers: syncConfig.headers
+          });
+        }
+        if (syncCloudHandler) {
           Sync.setCloudHandler(syncCloudHandler);
         }
         const platform = platformBrowserDynamic();
