@@ -1,4 +1,5 @@
 declare var require: any
+
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app.module';
 import { KeycloakService } from '../services/keycloak.service';
@@ -50,12 +51,10 @@ const bootstrap = function() {
               'Authorization': 'Bearer ' + KeycloakService.auth.authz.token
             }
           });
-        } else if (syncConfig.app_id && syncConfig.app_key) {
+        }
+        if (syncConfig.headers) {
           syncCloudHandler = buildSyncCloudHandler(syncCloudUrl, {
-            headers: {
-              'app_id': syncConfig.app_id,
-              'app_key': syncConfig.app_key
-            }
+            headers: syncConfig.headers
           });
         }
         if (syncCloudHandler) {
