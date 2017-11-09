@@ -52,7 +52,9 @@ const bootstrap = function() {
             }
           });
         }
-        if (syncConfig.headers) {
+        if (syncConfig.headers 
+            && syncConfig.headers.app_id
+            && syncConfig.headers.app_key) {
           syncCloudHandler = buildSyncCloudHandler(syncCloudUrl, {
             headers: syncConfig.headers
           });
